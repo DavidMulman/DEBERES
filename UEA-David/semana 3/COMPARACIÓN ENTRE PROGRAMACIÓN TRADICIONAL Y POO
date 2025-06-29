@@ -1,0 +1,10 @@
+COMPARACIÓN ENTRE PROGRAMACIÓN TRADICIONAL Y POO
+
+- Programación Tradicional:
+  En este enfoque, el programa está estructurado en funciones independientes. La lógica está separada en módulos funcionales que se llaman desde el bloque principal. Es simple y directo para tareas pequeñas como esta.
+
+- Programación Orientada a Objetos:
+  En este paradigma, encapsulamos datos y comportamientos dentro de una clase. Esto permite una mejor organización y reutilización del código, facilitando su mantenimiento y escalabilidad. Aunque puede parecer más complejo al inicio, es ideal para proyectos grandes.
+
+- Conclusión:
+  Para programas simples, la programación tradicional es suficiente. Sin embargo, en proyectos grandes, POO ofrece ventajas significativas al permitir estructurar el código de manera más clara, reutilizable y mantenible.

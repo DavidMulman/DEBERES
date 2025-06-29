@@ -1,0 +1,153 @@
+# Clase que representa una habitación del hotel
+class Habitacion:
+    def __init__(self, numero, tipo, precio, capacidad, descripcion):
+        self.numero = numero
+        self.tipo = tipo  # Ej: simple, doble, suite
+        self.precio = precio
+        self.capacidad = capacidad
+        self.descripcion = descripcion
+        self.disponible = True  # Estado inicial de la habitación
+
+    def mostrar_info(self):
+        estado = "Disponible" if self.disponible else "Ocupada"
+        print(f"Habitación {self.numero} - Tipo: {self.tipo} - Precio: ${self.precio} - Capacidad: {self.capacidad} personas - Estado: {estado}")
+        print(f"  Descripción: {self.descripcion}")
+
+    def reservar(self):
+        if self.disponible:
+            self.disponible = False
+            print(f"Habitación {self.numero} reservada correctamente.")
+        else:
+            print(f"La habitación {self.numero} ya está ocupada.")
+
+    def liberar(self):
+        if not self.disponible:
+            self.disponible = True
+            print(f"Habitación {self.numero} ahora está disponible.")
+        else:
+            print(f"La habitación {self.numero} ya está libre.")
+
+
+# Clase que representa a un cliente
+class Cliente:
+    def __init__(self, nombre, identificacion, telefono=None, email=None):
+        self.nombre = nombre
+        self.identificacion = identificacion
+        self.telefono = telefono
+        self.email = email
+
+    def mostrar_info(self):
+        print(f"Cliente: {self.nombre}")
+        print(f"  ID: {self.identificacion}")
+        if self.telefono:
+            print(f"  Teléfono: {self.telefono}")
+        if self.email:
+            print(f"  Email: {self.email}")
+
+
+# Clase que maneja el sistema de reservas del hotel
+class SistemaReservas:
+    def __init__(self):
+        self.habitaciones = []
+        self.reservas = []
+
+    def agregar_habitacion(self, habitacion):
+        self.habitaciones.append(habitacion)
+        print(f"Habitación {habitacion.numero} agregada al sistema.")
+
+    def mostrar_habitaciones_disponibles(self):
+        print("\nHabitaciones disponibles:")
+        disponibles = [h for h in self.habitaciones if h.disponible]
+        if not disponibles:
+            print("No hay habitaciones disponibles en este momento.")
+        for h in disponibles:
+            h.mostrar_info()
+
+    def buscar_habitaciones(self, tipo=None, precio_max=None):
+        print("\nBuscando habitaciones...")
+        resultados = self.habitaciones
+        if tipo:
+            resultados = [h for h in resultados if h.tipo.lower() == tipo.lower() and h.disponible]
+        if precio_max is not None:
+            resultados = [h for h in resultados if h.precio <= precio_max and h.disponible]
+
+        if resultados:
+            print(f"Se encontraron {len(resultados)} habitación(es) que cumplen con los criterios:")
+            for h in resultados:
+                h.mostrar_info()
+        else:
+            print("No se encontraron habitaciones que coincidan con la búsqueda.")
+
+    def reservar_habitacion(self, numero, cliente):
+        # Verificar si cliente ya tiene reserva
+        for c, h in self.reservas:
+            if c.identificacion == cliente.identificacion:
+                print(f"El cliente {cliente.nombre} ya tiene una reserva para la habitación {h.numero}.")
+                return
+
+        for h in self.habitaciones:
+            if h.numero == numero:
+                if h.disponible:
+                    h.reservar()
+                    self.reservas.append((cliente, h))
+                    print(f"Reserva registrada para {cliente.nombre} en habitación {numero}.")
+                    return
+                else:
+                    print("Esa habitación ya está ocupada.")
+                    return
+        print("Habitación no encontrada.")
+
+    def cancelar_reserva(self, numero, cliente):
+        for i, (c, h) in enumerate(self.reservas):
+            if h.numero == numero and c.identificacion == cliente.identificacion:
+                h.liberar()
+                del self.reservas[i]
+                print(f"Reserva de habitación {numero} cancelada para {cliente.nombre}.")
+                return
+        print("Reserva no encontrada.")
+
+    def mostrar_reservas(self):
+        print("\nReservas registradas:")
+        if not self.reservas:
+            print("No hay reservas registradas.")
+        for cliente, habitacion in self.reservas:
+            cliente.mostrar_info()
+            habitacion.mostrar_info()
+            print("-" * 40)
+
+
+# Ejecución del programa
+if __name__ == "__main__":
+    sistema = SistemaReservas()
+
+    # Crear habitaciones con más detalles
+    sistema.agregar_habitacion(Habitacion(101, "Simple", 40, 1, "Habitación sencilla con cama individual y baño privado."))
+    sistema.agregar_habitacion(Habitacion(102, "Doble", 60, 2, "Habitación cómoda con dos camas y balcón."))
+    sistema.agregar_habitacion(Habitacion(103, "Suite", 120, 4, "Suite amplia con sala de estar y vista panorámica."))
+
+    sistema.mostrar_habitaciones_disponibles()
+
+    # Crear clientes con más información
+    cliente1 = Cliente("María López", "1102658472", telefono="0998765432", email="maria.lopez@email.com")
+    cliente2 = Cliente("Juan Pérez", "2201553344", telefono="0987654321")
+
+    # Buscar habitaciones por tipo y precio
+    sistema.buscar_habitaciones(tipo="Doble")
+    sistema.buscar_habitaciones(precio_max=100)
+
+    # Reservar habitaciones
+    sistema.reservar_habitacion(102, cliente1)
+    sistema.reservar_habitacion(101, cliente2)
+
+    # Mostrar reservas
+
+    sistema.mostrar_reservas()
+
+    # Cancelar reserva
+    sistema.cancelar_reserva(102, cliente1)
+
+    # Mostrar reservas luego de cancelar
+    sistema.mostrar_reservas()
+
+    # Mostrar habitaciones disponibles actualizadas
+    sistema.mostrar_habitaciones_disponibles()
